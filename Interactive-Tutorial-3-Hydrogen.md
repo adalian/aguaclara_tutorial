@@ -1,5 +1,6 @@
 # Using Python and Running it With Hydrogen in Markdown
 
+
 ## Running Code With Hydrogen
 1. Below this, I've copied the code I wrote for the [Python Packages](https://aguaclara.github.io/aguaclara_tutorial/python-and-hydrogen/python-packages.html) tutorial. You should familiarize yourself with the different Hydrogen commands using this code. For the first line, use `Hydrogen: Run` (`Cmd + Enter`).
 2. For the second line, use `Hydrogen: Run and Move Down` (`Shift + Enter`).
@@ -7,7 +8,8 @@
 
 ```python
 from aguaclara.play import *
-
+from aguaclara.play import numpy
+import numpy
 xArray = u.Quantity(np.arange(0.1, 0.5, 0.01), u.m)
 
 def re_flat_plate(velocity, dist, nu):
@@ -31,38 +33,55 @@ These questions are meant to test what you've learned from the Python Basics tut
 1. Write a conditional statement with 3 conditions: when x is 10, when x is 1, and when x is anything other than 1 or 10. For each condition, have your code print what the value is or isn't.
 
 <!--- Fill you answer here. --->
-
-
+```python
+x = 1
+if x == 1:
+  print('x is equal to 1')
+elif(x == 10):
+  print('x is equal to 10')
+else:
+  print('x is not equal to 1 or 10')
+```
 
 
 2. Write a `for` loop that takes a variable with an initial value of 0, and adds the current index to the previous value of that variable (i.e. you variable should grow in size every iteration). Perform the iteration 20 times, and have the final value be printed at the end.
 
 <!--- Fill you answer here. --->
-
-
-
-
-
-
-
+``` python
+x = 0
+for y in range(1,21):
+  x = x+y
+  print(x)
+```
 
 
 3. Using the NumPy package and `unit_registry`, calculate the value of sin(4) meters, and use the sigfig function from the unit unit_registry module in aide_design to get your answer to 2 sig-figs. *(Hint: You will need to import these packages. Remember how to do that?)*
 
 <!--- Fill you answer here. --->
-
+``` Python
+from aguaclara.core.units import unit_registry as u
+import math as m
+u.default_format = '.2f'
+u = m.sin(4) * u.m
+print (u)
+```
 
 
 4. Create a `list` of length 5, and verify the length of your list. Once you've done that, turn your `list` into an `array` and apply units of meters to it. After that, create a 5x5 `array`, extract the middle row and middle column. Verify the size of your 2D `array` and apply units of liters to it.
 
 <!--- Fill you answer here. --->
-
-
-
-
-
-
-
+``` python
+myList = [0, 1, 2, 3, 4]
+len(myList)
+from aide_design.play import *
+Array = np.array(myList)
+ArrayUnits = Array * u.m
+my2DArray = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25]])
+my2DArray[2,:]
+my2DArray[:,2]
+np.size(my2DArray)
+my2DAarrayUnits = my2DArray*u.L
+```
 
 
 5.  One of the most famous equations for a particle diffusing through a liquid at low Reynolds Number is the Stokes-Einstein Equation where k<sub>B</sub> is the Boltzmann constant, T is the temperature in Kelvin, eta is the dynamic viscosity in kg/(m*s), and r is the particle radius. Write a function that takes a temperature in Kelvin, a particle radius in meters, and a viscosity of water to calculate the diffusion coefficient D.
@@ -79,14 +98,31 @@ from scipy.constants import Boltzmann as kB_sc # I've imported the unitless valu
 kB = kB_sc * u.joule / u.kelvin # I've given kB units for you in J/K; you can use the kB variable to give you Boltzmann's constant with units
 
 # Write your code here
-
+kBnew = kB.toBaseUnits()
+def DiffCoeff(T, r, eta):
+  TempK = T.to(u.kelvin)
+  RadM = r.to(u.m)
+  etaU = eta * u.kg / (u.m * u.s)
+  D = (kBnew * TempK) / (6 * np.pi * etaU * RadM)
+  return D.toBaseUnits()
+DiffCoeff(25 * u.celsius, 0.001 * u.millimeter , 0.000089)
 ```
 
 6. You have a pipe with a radius of 0.2 m with water flowing in it at 2 m<sup>3</sup>/s. You want to see how the Reynolds Number changes as viscosity changes due to a change in temperature from 0 to 200<sup>o</sup>C. Create a plot of Reynolds Number against Temperature in Kelvin to show a relationship. Make sure your plot has a title, labeled axes, and axes grid. You can use functions from `physchem` like `pc.re_pipe` and `pc.viscosity_kinematic`. *(Hint: Make an array of temperatures to input into the `pc.viscosity_kinematic` function)*. Make sure to save you plot to your images folder in your personal repository, and display it below using `plt.show()` and a relative file path to the image.
 
 <!--- Fill you answer here. --->
-
-
+```python
+D = 0.2 * u.m
+FlowSpeed = 2 * u.m**3 / u.s
+TempArray = u.Quantity(np.arrange(273,473),u.kelvin)
+Nu = pc.viscosity_kinematic (TempArray)
+Rey = pc.re_pipe(FlowSpeed, D, Nu)
+plt.plot(TempArray, Rey)
+plt.xlabel('Temp(K)')
+plt.ylabel('Rey Num')
+plt.title('Rey Num at Different Temps')
+plt.show()
+```
 # GitHub Basics
 Congratulations! You've completed this interactive tutorial. Now all you need to do is save your work and put it on your personal repository. Toggle the Git Tab using `Cntrl + Shift + 9`.
 
